@@ -42,7 +42,9 @@ git diff --check
 
 ## Git and delivery
 
-- Reuse a suitable checkout, create an independent branch, and deliver through a Pull Request. Do not push to main, merge a PR or rewrite shared history without explicit authorization.
+- Reuse a suitable checkout, create an independent branch, and prepare delivery through a Pull Request.
+- Every remote push requires fresh, explicit user approval for that delivery. Every merge or direct update to main also requires explicit approval naming that action and target. Previous approvals are not standing permission for later pushes or merges; a request to fix an issue alone does not authorize publication.
+- Before requesting approval, finish the local work and present the concrete changes, test results and target branch. Wait for the user's reply before pushing or updating main. Local edits, verification and local commits may proceed within the authorized task. Never rewrite shared history without explicit authorization.
 - Before committing, inspect `git status`, the full staged diff and ignored report paths. Stage explicit files; avoid `git add .` with experimental data present.
 - Every delivery explains the reason, affected files, exact tests/results and remaining issues. Link the Issue without automatically closing hardware acceptance based on software tests.
 - Update documentation with any CLI/schema behavior change. Record upstream commit/date and separate source inspection from installation, inference and physical-device verification.
