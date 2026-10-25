@@ -1,6 +1,6 @@
-# 实验 003：XiaoAiAgent + Ollama/Qwen 语音闭环（M1，文本预检通过）
+# 实验 003：XiaoAiAgent + Ollama/Qwen 语音闭环（M1，首次实机确认）
 
-**2026-10-25：Windows 上已通过真实 Qwen 文本、上游模型工厂与只读时间工具预检；所有者已使用可选入口完成短信验证，查到两台 L05C，并通过改名明确目标设备。MIOT 对应及 L05C TTS 尚未实机验证。** 本仓库没有 Xiaomi Bridge 实现。版本与边界见[预检记录](results/2026-10-25-m1-preflight.md)、[验证适配记录](results/2026-10-25-m1-account-verification.md)及[设备绑定记录](results/2026-10-25-m1-device-binding.md)。M0 的人工五次时延仍待补录，不据此宣称整个里程碑已验收。
+**2026-10-25：所有者已完成短信验证、目标设备识别，并确认 L05C 实际播报与终端 Agent 回复一致，满足 M1 单次语音闭环最低验收；时延、重复播报和稳定性待复测。** 本仓库没有独立的 Xiaomi Bridge 实现。证据与限制见[首次语音记录](results/2026-10-25-m1-voice.md)，此前过程见[预检记录](results/2026-10-25-m1-preflight.md)、[验证适配记录](results/2026-10-25-m1-account-verification.md)及[设备绑定记录](results/2026-10-25-m1-device-binding.md)。M0 的人工五次时延仍待补录。
 
 ## 已核对的来源与边界
 
@@ -144,3 +144,12 @@ Remove-Variable securePassword
 失败时标注首次失败阶段、时间、版本和脱敏错误。需要 debug 时临时设 `xiaomi.debug: true`，日志会包含语音和标识，仅保留私有。不要把“HTTP 正常”记成“L05C 兼容”，也不要把“没有开放 TCP 端口”当成云端桥接失败。
 
 只有实机完整播报至少一次 Agent 回复才能验收 Issue #2；连续对话、MCP/电脑控制、延迟优化留给后续里程碑。
+
+本次所有者已确认满足这项单次功能条件。请复制[复测模板](templates/m1-record.md)到私有 `reports/`，先补 5 次等待时间与重复播报观测，不据一次成功推断长期稳定性：
+
+```powershell
+# 在 XiaoAi-Lab 根目录的另一个终端执行，保持桥接进程运行：
+$stamp = Get-Date -Format 'yyyyMMdd-HHmmss-fff'
+New-Item -ItemType Directory -Force reports | Out-Null
+Copy-Item docs/experiments/templates/m1-record.md "reports/m1-voice-$stamp.md"
+```

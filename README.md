@@ -2,7 +2,7 @@
 
 > 把小爱音箱 Play 增强版（L05C）变成可扩展的 AI Agent 语音终端，同时开展可复现、低风险的嵌入式研究。
 
-**状态：M0 软件侧已验证，已记录 L05C / 固件 1.62.28 / 原生问答成功，5 次人工时延待补。M1 文本与时间工具预检通过；所有者已完成短信验证和目标设备识别，MIOT 对应与音箱播报待验证。** 当前提供本地诊断及独立上游的可选验证／绑定入口，**不包含刷机、Root、SSH 解锁或声称已完成的 AI 语音接入**。审查见[维护记录](docs/maintenance/2026-10-25-m0-audit.md)，进展见[预检记录](docs/experiments/results/2026-10-25-m1-preflight.md)及[设备绑定记录](docs/experiments/results/2026-10-25-m1-device-binding.md)。
+**状态：M1 首次实机语音闭环已由所有者确认，音箱实际播报与终端 Agent 回复一致；稳定性、时延和重复播报待复测。M0 软件侧已验证，5 次原生问答人工时延待补。** 当前提供本地诊断及独立上游的可选验证／绑定入口，不包含刷机、Root 或 SSH 解锁。审查见[维护记录](docs/maintenance/2026-10-25-m0-audit.md)，实机证据与限制见[首次语音记录](docs/experiments/results/2026-10-25-m1-voice.md)。
 
 ## 项目目标
 
@@ -33,7 +33,7 @@
 平行研究路线：[设备信息] → [只读局域网探测] → [协议/固件资料] → [可选 UART]
 ```
 
-本仓库提供 M0 诊断工具和一个独立运行的 M1 可选账号验证入口；桥接与 Agent 仍由单独克隆的上游提供，实机语音闭环尚未验证。
+本仓库提供 M0 诊断工具及 M1 可选验证／绑定入口；桥接与 Agent 由单独克隆的上游提供，首次语音闭环已由所有者实机确认。
 
 ## 5 分钟启动 M0 实验
 
@@ -89,7 +89,7 @@ xiaoai-lab doctor
 
 ## 下一步：M1 语音闭环验证（基于现有项目）
 
-先参考 [实验 003](docs/experiments/003-bridge.md) 单独克隆 `Nex-Z/XiaoAiAgent`，使用其要求的 **Python 3.12+** 环境。本次已通过 `qwen3:8b` 与 LangGraph 时间工具预检；所有者使用[可选验证入口](docs/experiments/003-bridge.md#可选短信邮箱验证入口)完成短信验证和设备查询，并通过改名确认目标。多台同型号设备的 MIOT 绑定检查已通过离线测试，实际 MIOT 对应及 TTS 仍待验证。初次测试保留小爱原生回答并设置触发词。
+参考 [实验 003](docs/experiments/003-bridge.md) 单独克隆 `Nex-Z/XiaoAiAgent`，使用其要求的 **Python 3.12+** 环境。本次已通过 `qwen3:8b` 与 LangGraph 时间工具预检；所有者完成短信验证和目标识别后，确认音箱实际播报与终端 Agent 回复一致，见[首次语音记录](docs/experiments/results/2026-10-25-m1-voice.md)。初次测试保留小爱原生回答并设置触发词；接下来按[记录模板](docs/experiments/templates/m1-record.md)补响应时间和重复播报观测。
 
 > 本仓库**不复制** XiaoAiAgent 源码，不声称自己的 `config/bridge.example.yaml` 已能驱动当前 CLI；该配置文件只是上游手动参考模板，具体参数随上游版本变化，以其 README 为准。
 
