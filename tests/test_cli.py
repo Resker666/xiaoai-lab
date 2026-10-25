@@ -1,5 +1,8 @@
 import io
 import json
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
@@ -124,6 +127,16 @@ class CliTests(unittest.TestCase):
         self.assertEqual((code, error), (0, ""))
         self.assertIn("doctor", output)
         self.assertIn("probe", output)
+
+    def test_subprocess_help_and_errors_are_utf8_on_english_windows(self):
+        environment = {**os.environ, "PYTHONIOENCODING": "cp1252", "PYTHONUTF8": "0"}
+        for args, expected_code, channel in ((["--help"], 0, "stdout"), (["probe", "--ip", "8.8.8.8"], 2, "stderr")):
+            with self.subTest(args=args):
+                result = subprocess.run([sys.executable, "-m", "xiaoai_lab", *args], env=environment, capture_output=True, timeout=10)
+                self.assertEqual(result.returncode, expected_code, result.stderr)
+                text = getattr(result, channel).decode("utf-8")
+                self.assertTrue(any(ord(char) > 127 for char in text))
+                self.assertNotIn("Traceback", text)
 
 
 if __name__ == "__main__":
