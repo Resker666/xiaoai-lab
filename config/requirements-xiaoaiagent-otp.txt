@@ -1,0 +1,3 @@
+# Optional M1 authentication backend. Install only in XiaoAiAgent's environment.
+# MIT-licensed Yonsm/MiService; pinned source includes SMS/email verification.
+miservice @ https://codeload.github.com/Yonsm/MiService/zip/a1727f7817819cae89f20ea197c030aaa199b96d#sha256=a526b15bc82072ea1dbed3a4688494660a73acc583122a0d4807d3db7e307bbf

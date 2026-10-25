@@ -20,3 +20,14 @@ jobs:
       - run: python -m compileall -q src tests
       - run: xiaoai-lab --help
       - run: python -m xiaoai_lab --help
+  optional-auth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e . -r config/requirements-xiaoaiagent-otp.txt
+      - run: python -m pip check
+      - run: python -m unittest discover -s tests -v
+      - run: python -m compileall -q src scripts tests

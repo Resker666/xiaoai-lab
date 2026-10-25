@@ -33,7 +33,7 @@
 平行研究路线：[设备信息] → [只读局域网探测] → [协议/固件资料] → [可选 UART]
 ```
 
-目前仓库的 `src/xiaoai_lab` **只有 M0 诊断工具**；桥接与 Agent 尚在路线图中，绝不混淆计划与已实现的功能。
+本仓库提供 M0 诊断工具和一个独立运行的 M1 可选账号验证入口；桥接与 Agent 仍由单独克隆的上游提供，实机语音闭环尚未验证。
 
 ## 5 分钟启动 M0 实验
 
@@ -89,7 +89,7 @@ xiaoai-lab doctor
 
 ## 下一步：M1 语音闭环验证（基于现有项目）
 
-先参考 [实验 003](docs/experiments/003-bridge.md) 单独克隆 `Nex-Z/XiaoAiAgent`，使用其要求的 **Python 3.12+** 环境。本次 Windows/Python 3.12.15 + `qwen3:8b` 已通过上游安装、适配层与 LangGraph 时间工具预检；下一步由设备所有者在本机设置环境变量并执行 `python main.py --list-devices`，明确选择设备后再验证语音 TTS。初次测试保留小爱原生回答并设置触发词。安装成功与文本预检不代表已经完成真机语音闭环。
+先参考 [实验 003](docs/experiments/003-bridge.md) 单独克隆 `Nex-Z/XiaoAiAgent`，使用其要求的 **Python 3.12+** 环境。本次 Windows/Python 3.12.15 + `qwen3:8b` 已通过上游安装、适配层与 LangGraph 时间工具预检；设备查询遇到上游 `KeyError: 'userId'`，可使用[可选验证入口](docs/experiments/003-bridge.md#可选短信邮箱验证入口)重试。它复用固定版本 MiService 的官方验证流程，仅通过离线测试，实际账号登录与语音 TTS 仍待所有者验证。初次测试保留小爱原生回答并设置触发词。
 
 > 本仓库**不复制** XiaoAiAgent 源码，不声称自己的 `config/bridge.example.yaml` 已能驱动当前 CLI；该配置文件只是上游手动参考模板，具体参数随上游版本变化，以其 README 为准。
 

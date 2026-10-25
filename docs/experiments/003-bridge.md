@@ -1,6 +1,6 @@
 # 实验 003：XiaoAiAgent + Ollama/Qwen 语音闭环（M1，文本预检通过）
 
-**2026-10-25：Windows 上已安装固定提交的上游，并通过真实 Qwen 文本推理、上游模型工厂与 LangGraph 只读时间工具往返预检；尚未登录小米、发现账户设备或验证 L05C TTS。** 本仓库没有 Xiaomi Bridge 实现。完整版本、检查结果及边界见[本次预检记录](results/2026-10-25-m1-preflight.md)。M0 的人工五次时延仍待补录，不据此宣称整个里程碑已验收。
+**2026-10-25：Windows 上已安装固定提交的上游，并通过真实 Qwen 文本推理、上游模型工厂与 LangGraph 只读时间工具往返预检；所有者查询设备时遇到 `KeyError: 'userId'`，尚未成功发现账户设备或验证 L05C TTS。** 本仓库没有 Xiaomi Bridge 实现。完整版本、检查结果及边界见[本次预检记录](results/2026-10-25-m1-preflight.md)，登录问题见[验证适配记录](results/2026-10-25-m1-account-verification.md)。M0 的人工五次时延仍待补录，不据此宣称整个里程碑已验收。
 
 ## 已核对的来源与边界
 
@@ -96,6 +96,29 @@ $env:MI_PASS = [System.Net.NetworkCredential]::new('', $securePassword).Password
 macOS 使用 `read -r MI_USER; export MI_USER` 与 `read -rs MI_PASS; export MI_PASS` 输入当前 shell 的环境变量（不要粘贴字面凭据到命令行）。实验结束后清理当前会话变量。
 
 遇到验证码或风控时遵循官方验证流程；即使上游错误提示建议关闭二次验证，也不应照做。不要把密码放在 `--password` 命令参数中。
+
+### 可选短信／邮箱验证入口
+
+固定上游在登录响应缺少 `userId` 时直接抛错。需要额外验证的响应可能出现这种情况；此报错本身不能证明密码错误或确定本次原因。不要反复试密码、关闭二次验证或公开原始响应／验证链接。
+
+本仓库的可选入口复用 [Yonsm/MiService](https://github.com/Yonsm/MiService/tree/a1727f7817819cae89f20ea197c030aaa199b96d) 的短信／邮箱验证，不修改 XiaoAiAgent 源文件。仅在其独立环境中安装固定源码依赖（MIT，源码版本 3.0.2，包含短信发送补全；不能用 PyPI 3.0.1 替代）。在 XiaoAiAgent 根目录执行：
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r ../xiaoai-lab/config/requirements-xiaoaiagent-otp.txt
+# 保持此前设置 MI_USER / MI_PASS 的同一个终端：
+.\.venv\Scripts\python.exe ../xiaoai-lab/scripts/xiaoaiagent_otp.py --list-devices
+```
+
+需要验证时会向账号的绑定手机／邮箱请求验证码，并在本机隐藏输入。验证码只在该终端输入，不发到聊天或写入报告。不支持的图片验证码／协议变化会报错停止，不保证每个账号均可完成验证。入口只输出分类后的登录失败原因与数值代码，并抑制依赖中可能包含原始响应的账号日志；上游设备列表和启动日志仍含个人标识，保留本机。
+
+成功时打印所选设备字段的 JSON 列表；私下核对 L05C 条目并设置 `MI_DID`。随后用同一入口启动监听：
+
+```powershell
+$env:MI_DID = Read-Host '输入目标 L05C 所在行的 deviceID（仅本机）'
+.\.venv\Scripts\python.exe ../xiaoai-lab/scripts/xiaoaiagent_otp.py
+```
+
+入口先检查凭据；监听模式还要求显式设置 `MI_DID`，且实际读取的配置必须使用同一个设备，否则拒绝启动。设备查询调用现有 `MiNAService`，失败时不会进入上游建议关闭二次验证的错误处理。查询或账号验证失败返回 1，预检不通过返回 2；退出 0 仍不能代替设备列表或实际声音验收。原生 `main.py` 入口继续存在，但不使用这里的验证适配器。macOS 将 Python 路径替换为 `.venv/bin/python`。源码依赖仅用于此实验，M0 的安装和 CLI 不需要它。
 
 ## 5. 真机语音验收与记录
 
