@@ -1,0 +1,30 @@
+# Credentials and locally captured data
+.env
+.env.*
+!.env.example
+config/*.yaml
+!config/*.example.yaml
+*.token
+*.cookie
+.mi.token
+*.pcap
+*.pcapng
+*.har
+logs/
+reports/*
+!reports/.gitkeep
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# OS/editors
+.DS_Store
+.idea/
+.vscode/

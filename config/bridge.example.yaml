@@ -1,0 +1,22 @@
+# REFERENCE ONLY for Nex-Z/XiaoAiAgent. This project's CLI does not load it.
+# Copy/adapt settings into upstream config.yaml and check upstream README.
+llm:
+  provider: "ollama"
+  model: "REPLACE_WITH_OLLAMA_LIST_MODEL"
+  base_url: "http://localhost:11434"
+
+xiaomi:
+  username: "${MI_USER}"
+  password: "${MI_PASS}"
+  did: ""
+  hardware: "L05C"
+  use_command: true
+  mute_xiaoai: false
+  trigger_word: "帮我"
+  tts_command: [5, 3]
+  wake_command: [5, 4]
+  debug: false
+
+server:
+  host: "127.0.0.1"
+  port: 8000
