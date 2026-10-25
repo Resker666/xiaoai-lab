@@ -48,7 +48,7 @@ Copy-Item ../xiaoai-lab/config/bridge.example.yaml config.yaml
 
 若目录已经存在，先检查其中的版本及修改，不要覆盖现有上游 `config.yaml`。安装失败时停在此阶段，记录 Python 版本和脱敏后的依赖错误，不继续账号登录。macOS 对应使用 `python3.12 -m venv .venv`、`.venv/bin/python -m pip ...` 和 `cp`。
 
-手动编辑 `config.yaml`：`llm.model` 填真实 tag；`provider: ollama`、`api_key: ""`、`base_url: http://127.0.0.1:11434`；保留 `server.host: 127.0.0.1`、`mcp_servers: []`、`mute_xiaoai: false`、`trigger_word: "帮我"`。配置属于上游，XiaoAi-Lab CLI 不读取它。
+手动编辑 `config.yaml`：`llm.model` 填真实 tag；`provider: ollama`、`api_key: ""`、`base_url: http://127.0.0.1:11434`；保留 `server.host: 127.0.0.1`、`mcp_servers: []`、`trigger_word: "帮我"`。当前参考配置使用 `mute_xiaoai: true`，尝试减少命中触发词后的原生回答抢占，边界见下文。配置属于上游，XiaoAi-Lab CLI 不读取它。
 
 本次已实测 `qwen3:8b`。该模型可在 `llm.extra` 中加入以下配置，关闭思考输出并约束首次试验的生成量；这些值是本次实验选择，不代表通用最佳性能参数：
 
@@ -153,3 +153,20 @@ $stamp = Get-Date -Format 'yyyyMMdd-HHmmss-fff'
 New-Item -ItemType Directory -Force reports | Out-Null
 Copy-Item docs/experiments/templates/m1-record.md "reports/m1-voice-$stamp.md"
 ```
+
+## 6. 减少原生回答抢占
+
+首次闭环使用 `mute_xiaoai: false` 保留原生回答；随后所有者报告原生回答抢占 Agent 播报。先使用固定上游已有的开关，只修改现有 `xiaomi` 节的这一项，保留原来的触发词：
+
+```yaml
+mute_xiaoai: true
+trigger_word: "帮我"
+```
+
+固定上游 `_poll_once` 在过滤和触发词检查通过后，先调用 `_stop_playing`，再调用 Agent 和 TTS。因此未命中触发词的问题不会由这个开关停止播放；它不是永久关闭小爱原生功能。已用实际上游方法及模拟边界验证该执行顺序，没有发送真实停止命令。
+
+配置修改后需要重启桥接：在原终端按 Ctrl+C，然后从 XiaoAiAgent 根目录重新运行 `..\xiaoai-lab\scripts\xiaoaiagent_otp.py`，使用原有的 `.venv\Scripts\python.exe`。保持原来的账号和设备环境变量。上游在启动时加载配置，运行中的进程不会自动应用修改。
+
+这里是在云端对话记录出现后请求停止播放，不能保证原生从未开口；轮询期间可能先听到一小段原生声音。此固件是否实际响应现有停止命令，以及是否仍会稍后抢占，均待所有者复测。先分别测试带“帮我”的问题与一个不带触发词的问题，并记录对应 Agent 回答是否正常播报、原生是否仍打断。
+
+若仍抢占，可临时启用 `xiaomi.debug: true` 并在本机查看“发送 stop 命令结果”，仅反馈该布尔结果和声音现象；调试日志还含对话与设备标识，原件保留本地。接口返回成功仍需实际听感确认，不据此记录声音问题已解决。

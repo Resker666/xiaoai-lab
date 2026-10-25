@@ -1,7 +1,7 @@
 # REFERENCE ONLY for Nex-Z/XiaoAiAgent. This project's CLI does not load it.
 # Source inspected: c856d2a39d156299d0b7e50a84e6421834a64004 (2026-10-25).
 # Requires a separate Python >=3.12 environment and langchain-ollama.
-# Source-level reference only: installation/inference/L05C remain unverified.
+# Verify account, playback and stop behavior on each device/firmware.
 # Copy/adapt settings into upstream config.yaml; see docs/experiments/003-bridge.md.
 llm:
   provider: "ollama"
@@ -16,7 +16,8 @@ xiaomi:
   did: "${MI_DID}"
   hardware: "L05C"
   use_command: true
-  mute_xiaoai: false
+  # Stop native playback after an accepted trigger; polling can leave a prefix.
+  mute_xiaoai: true
   trigger_word: "帮我"
   tts_command: [5, 3]
   wake_command: [5, 4]

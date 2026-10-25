@@ -89,7 +89,7 @@ xiaoai-lab doctor
 
 ## 下一步：M1 语音闭环验证（基于现有项目）
 
-参考 [实验 003](docs/experiments/003-bridge.md) 单独克隆 `Nex-Z/XiaoAiAgent`，使用其要求的 **Python 3.12+** 环境。本次已通过 `qwen3:8b` 与 LangGraph 时间工具预检；所有者完成短信验证和目标识别后，确认音箱实际播报与终端 Agent 回复一致，见[首次语音记录](docs/experiments/results/2026-10-25-m1-voice.md)。初次测试保留小爱原生回答并设置触发词；接下来按[记录模板](docs/experiments/templates/m1-record.md)补响应时间和重复播报观测。
+参考 [实验 003](docs/experiments/003-bridge.md) 单独克隆 `Nex-Z/XiaoAiAgent`，使用其要求的 **Python 3.12+** 环境。本次已通过 `qwen3:8b` 与 LangGraph 时间工具预检；所有者完成短信验证和目标识别后，确认音箱实际播报与终端 Agent 回复一致，见[首次语音记录](docs/experiments/results/2026-10-25-m1-voice.md)。当前参考配置以“帮我”为触发词，并启用上游的原生播放停止选项；抑制抢占的效果仍待固件实测。接下来按[记录模板](docs/experiments/templates/m1-record.md)补响应时间和重复播报观测。
 
 > 本仓库**不复制** XiaoAiAgent 源码，不声称自己的 `config/bridge.example.yaml` 已能驱动当前 CLI；该配置文件只是上游手动参考模板，具体参数随上游版本变化，以其 README 为准。
 
