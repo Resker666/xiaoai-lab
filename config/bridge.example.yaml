@@ -1,7 +1,11 @@
 # REFERENCE ONLY for Nex-Z/XiaoAiAgent. This project's CLI does not load it.
-# Copy/adapt settings into upstream config.yaml and check upstream README.
+# Source inspected: c856d2a39d156299d0b7e50a84e6421834a64004 (2026-10-25).
+# Requires a separate Python >=3.12 environment and langchain-ollama.
+# Source-level reference only: installation/inference/L05C remain unverified.
+# Copy/adapt settings into upstream config.yaml; see docs/experiments/003-bridge.md.
 llm:
   provider: "ollama"
+  api_key: ""
   model: "REPLACE_WITH_OLLAMA_LIST_MODEL"
   base_url: "http://localhost:11434"
 
@@ -16,7 +20,11 @@ xiaomi:
   tts_command: [5, 3]
   wake_command: [5, 4]
   debug: false
+  polling_interval: 1.0
 
 server:
   host: "127.0.0.1"
   port: 8000
+
+# No external tool servers in the initial voice experiment.
+mcp_servers: []
