@@ -220,6 +220,7 @@ class LauncherPreflightTests(unittest.TestCase):
         native = SimpleNamespace(MiAccount=None)
 
         def run_listener():
+            self.assertIsNot(modules["main"].XiaoAiSpeakerClient, object)
             account = native.MiAccount(None, "PRIVATE_USER", "PRIVATE_PASSWORD")
             account.response = {"code": 70016}
             try:
@@ -230,7 +231,7 @@ class LauncherPreflightTests(unittest.TestCase):
         modules = {
             "miservice": SimpleNamespace(__version__="3.0.2", MiAccount=SyntheticBackend),
             "src.xiaomi.miservice": native,
-            "main": SimpleNamespace(main=run_listener, get_config=lambda: SimpleNamespace(xiaomi=SimpleNamespace(did="PRIVATE_TARGET_DEVICE"))),
+            "main": SimpleNamespace(main=run_listener, XiaoAiSpeakerClient=object, get_config=lambda: SimpleNamespace(xiaomi=SimpleNamespace(did="PRIVATE_TARGET_DEVICE"))),
         }
         with tempfile.TemporaryDirectory() as tmp:
             self.make_upstream(Path(tmp))

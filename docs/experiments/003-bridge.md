@@ -1,6 +1,6 @@
 # 实验 003：XiaoAiAgent + Ollama/Qwen 语音闭环（M1，文本预检通过）
 
-**2026-10-25：Windows 上已安装固定提交的上游，并通过真实 Qwen 文本推理、上游模型工厂与 LangGraph 只读时间工具往返预检；所有者查询设备时遇到 `KeyError: 'userId'`，尚未成功发现账户设备或验证 L05C TTS。** 本仓库没有 Xiaomi Bridge 实现。完整版本、检查结果及边界见[本次预检记录](results/2026-10-25-m1-preflight.md)，登录问题见[验证适配记录](results/2026-10-25-m1-account-verification.md)。M0 的人工五次时延仍待补录，不据此宣称整个里程碑已验收。
+**2026-10-25：Windows 上已通过真实 Qwen 文本、上游模型工厂与只读时间工具预检；所有者已使用可选入口完成短信验证，查到两台 L05C，并通过改名明确目标设备。MIOT 对应及 L05C TTS 尚未实机验证。** 本仓库没有 Xiaomi Bridge 实现。版本与边界见[预检记录](results/2026-10-25-m1-preflight.md)、[验证适配记录](results/2026-10-25-m1-account-verification.md)及[设备绑定记录](results/2026-10-25-m1-device-binding.md)。M0 的人工五次时延仍待补录，不据此宣称整个里程碑已验收。
 
 ## 已核对的来源与边界
 
@@ -111,7 +111,9 @@ macOS 使用 `read -r MI_USER; export MI_USER` 与 `read -rs MI_PASS; export MI_
 
 需要验证时会向账号的绑定手机／邮箱请求验证码，并在本机隐藏输入。验证码只在该终端输入，不发到聊天或写入报告。不支持的图片验证码／协议变化会报错停止，不保证每个账号均可完成验证。入口只输出分类后的登录失败原因与数值代码，并抑制依赖中可能包含原始响应的账号日志；上游设备列表和启动日志仍含个人标识，保留本机。
 
-成功时打印所选设备字段的 JSON 列表；私下核对 L05C 条目并设置 `MI_DID`。随后用同一入口启动监听：
+成功时打印所选设备字段的 JSON 列表。`online: null` 表示接口未提供状态，不能当作离线。多台同型号设备时，在 App 中将实验音箱改成唯一名称，再查询确认名称变化对应的条目；不要依赖列表顺序。
+
+私下核对 L05C 条目并设置 `MI_DID`。随后用同一入口启动监听：
 
 ```powershell
 $env:MI_DID = Read-Host '输入目标 L05C 所在行的 deviceID（仅本机）'
@@ -120,6 +122,8 @@ $env:MI_DID = Read-Host '输入目标 L05C 所在行的 deviceID（仅本机）'
 
 入口先检查凭据；监听模式还要求显式设置 `MI_DID`，且实际读取的配置必须使用同一个设备，否则拒绝启动。设备查询调用现有 `MiNAService`，失败时不会进入上游建议关闭二次验证的错误处理。查询或账号验证失败返回 1，预检不通过返回 2；退出 0 仍不能代替设备列表或实际声音验收。原生 `main.py` 入口继续存在，但不使用这里的验证适配器。macOS 将 Python 路径替换为 `.venv/bin/python`。源码依赖仅用于此实验，M0 的安装和 CLI 不需要它。
 
+可选入口还替换上游的 MIOT 标识解析：优先使用选中设备直接返回的数字 DID；否则要求名称在小爱设备列表与 MIOT 设备列表中均唯一对应，并拒绝型号冲突。它不按型号或列表顺序选第一台。名称未同步、匹配不唯一或查询失败时不会启动音箱监听；看到失败后停止程序并核对，不把仅存活的 HTTP 服务当作语音桥接成功。
+
 ## 5. 真机语音验收与记录
 
 ```powershell
@@ -127,7 +131,7 @@ $env:LANGSMITH_TRACING = 'false'
 $env:LANGCHAIN_TRACING_V2 = 'false'
 $env:MI_DID = Read-Host '输入目标 L05C 所在行的 deviceID（仅留在本机）'
 if ([string]::IsNullOrWhiteSpace($env:MI_DID)) { throw '请先明确选择目标音箱' }
-.\.venv\Scripts\python.exe main.py
+.\.venv\Scripts\python.exe ../xiaoai-lab/scripts/xiaoaiagent_otp.py
 # 结束程序后清理当前会话：
 Remove-Item Env:MI_USER, Env:MI_PASS, Env:MI_DID
 Remove-Variable securePassword

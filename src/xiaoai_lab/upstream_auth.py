@@ -18,6 +18,8 @@ import sys
 from typing import Callable
 from urllib.parse import urljoin, urlsplit
 
+from .device_binding import build_speaker_class
+
 
 class LoginNotComplete(RuntimeError):
     def __init__(self, reason: str, code: int | None):
@@ -201,8 +203,13 @@ def main(argv: list[str] | None = None) -> int:
                 print('配置的设备与 MI_DID 不一致；请将 config.yaml 的 xiaomi.did 设为 "${MI_DID}"。', file=sys.stderr)
                 return 2
             sys.argv = [str(upstream / "main.py")]
-            entrypoint.main()
-            return 1 if failures else 0
+            original_speaker = entrypoint.XiaoAiSpeakerClient
+            try:
+                entrypoint.XiaoAiSpeakerClient = build_speaker_class(original_speaker)
+                entrypoint.main()
+                return 1 if failures else 0
+            finally:
+                entrypoint.XiaoAiSpeakerClient = original_speaker
         finally:
             native.MiAccount = original_account
     finally:

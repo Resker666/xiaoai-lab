@@ -2,7 +2,7 @@
 
 > 把小爱音箱 Play 增强版（L05C）变成可扩展的 AI Agent 语音终端，同时开展可复现、低风险的嵌入式研究。
 
-**状态：M0 软件侧已验证，并已记录授权设备网络观测及所有者确认的 L05C / 固件 1.62.28 / 原生问答成功；5 次人工时延待补。M1 的上游安装、Qwen 文本适配和只读时间工具预检已通过，账号设备发现与音箱播报尚未验证。** 当前代码提供本地环境检查与授权局域网 TCP 端口探测，**不包含刷机、Root、SSH 解锁或声称已完成的 AI 语音接入**。初次工程审查见[维护记录](docs/maintenance/2026-10-25-m0-audit.md)，后续进展见[M1 预检记录](docs/experiments/results/2026-10-25-m1-preflight.md)。
+**状态：M0 软件侧已验证，已记录 L05C / 固件 1.62.28 / 原生问答成功，5 次人工时延待补。M1 文本与时间工具预检通过；所有者已完成短信验证和目标设备识别，MIOT 对应与音箱播报待验证。** 当前提供本地诊断及独立上游的可选验证／绑定入口，**不包含刷机、Root、SSH 解锁或声称已完成的 AI 语音接入**。审查见[维护记录](docs/maintenance/2026-10-25-m0-audit.md)，进展见[预检记录](docs/experiments/results/2026-10-25-m1-preflight.md)及[设备绑定记录](docs/experiments/results/2026-10-25-m1-device-binding.md)。
 
 ## 项目目标
 
@@ -89,7 +89,7 @@ xiaoai-lab doctor
 
 ## 下一步：M1 语音闭环验证（基于现有项目）
 
-先参考 [实验 003](docs/experiments/003-bridge.md) 单独克隆 `Nex-Z/XiaoAiAgent`，使用其要求的 **Python 3.12+** 环境。本次 Windows/Python 3.12.15 + `qwen3:8b` 已通过上游安装、适配层与 LangGraph 时间工具预检；设备查询遇到上游 `KeyError: 'userId'`，可使用[可选验证入口](docs/experiments/003-bridge.md#可选短信邮箱验证入口)重试。它复用固定版本 MiService 的官方验证流程，仅通过离线测试，实际账号登录与语音 TTS 仍待所有者验证。初次测试保留小爱原生回答并设置触发词。
+先参考 [实验 003](docs/experiments/003-bridge.md) 单独克隆 `Nex-Z/XiaoAiAgent`，使用其要求的 **Python 3.12+** 环境。本次已通过 `qwen3:8b` 与 LangGraph 时间工具预检；所有者使用[可选验证入口](docs/experiments/003-bridge.md#可选短信邮箱验证入口)完成短信验证和设备查询，并通过改名确认目标。多台同型号设备的 MIOT 绑定检查已通过离线测试，实际 MIOT 对应及 TTS 仍待验证。初次测试保留小爱原生回答并设置触发词。
 
 > 本仓库**不复制** XiaoAiAgent 源码，不声称自己的 `config/bridge.example.yaml` 已能驱动当前 CLI；该配置文件只是上游手动参考模板，具体参数随上游版本变化，以其 README 为准。
 
