@@ -18,6 +18,6 @@
 ## 2026-10-25 软件侧进度
 
 - M0：已补齐参数边界、明确 TCP 状态、Ollama 响应校验、私有 JSON 保存和离线自动化测试。Windows/Python 3.11 已本地验证，CI 配置覆盖 Windows/macOS/Linux、Python 3.10/3.12。
-- Issue #1 仍待 L05C 实物型号/固件核对、授权 IP 探测、5 次原生问答人工计时；软件完成不等于 M0 实机验收完成。执行步骤和[记录模板](experiments/templates/m0-record.md)已提供。
-- Issue #2 本次只进行源码研究与教程核对，记录上游提交和 Python 3.12+ 边界；未完成账号登录、真实 Ollama 推理或 L05C TTS。下一步先验证一个本地模型与上游 Agent 文本链路，再由设备所有者进行语音闭环。
+- Issue #1：已保存自有设备的授权网络探测结果；所有者确认 L05C、固件 1.62.28 和原生问答成功，5 次原生问答人工计时仍待补录。执行步骤和[记录模板](experiments/templates/m0-record.md)已提供，Issue 保留未验收项。
+- Issue #2：已固定上游提交、建立独立 Python 3.12.15 环境，真实验证 `qwen3:8b`、上游模型工厂及 LangGraph 只读时间工具往返。账号登录、账户设备发现及 L05C TTS 尚未完成；下一步由所有者在本机授权并进行声音验收。版本和边界见[预检记录](experiments/results/2026-10-25-m1-preflight.md)。
 - M2–M4 本次未实现；性能结论和硬件假设不得从软件测试推导。

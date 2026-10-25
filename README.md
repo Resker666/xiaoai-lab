@@ -2,7 +2,7 @@
 
 > 把小爱音箱 Play 增强版（L05C）变成可扩展的 AI Agent 语音终端，同时开展可复现、低风险的嵌入式研究。
 
-**状态：M0 软件侧诊断、报告与测试已补齐；尚未在真实 L05C 上验证，Issue #1 的实机验收仍待完成。** 当前代码提供本地环境检查与授权局域网 TCP 端口探测，**不包含刷机、Root、SSH 解锁或声称已完成的 AI 语音接入**。本次审查与验证范围见[维护记录](docs/maintenance/2026-10-25-m0-audit.md)。
+**状态：M0 软件侧已验证，并已记录授权设备网络观测及所有者确认的 L05C / 固件 1.62.28 / 原生问答成功；5 次人工时延待补。M1 的上游安装、Qwen 文本适配和只读时间工具预检已通过，账号设备发现与音箱播报尚未验证。** 当前代码提供本地环境检查与授权局域网 TCP 端口探测，**不包含刷机、Root、SSH 解锁或声称已完成的 AI 语音接入**。初次工程审查见[维护记录](docs/maintenance/2026-10-25-m0-audit.md)，后续进展见[M1 预检记录](docs/experiments/results/2026-10-25-m1-preflight.md)。
 
 ## 项目目标
 
@@ -89,7 +89,7 @@ xiaoai-lab doctor
 
 ## 下一步：M1 语音闭环验证（基于现有项目）
 
-先参考 [实验 003](docs/experiments/003-bridge.md) 单独克隆 `Nex-Z/XiaoAiAgent`，使用其要求的 **Python 3.12+** 环境；先验证 Ollama 模型与适配层文本请求，再由设备所有者设置环境变量并执行 `python main.py --list-devices`，最后验证语音 TTS。初次测试保留小爱原生回答并设置触发词。上游配置按已核对提交记录，安装和真机兼容性仍待验证。
+先参考 [实验 003](docs/experiments/003-bridge.md) 单独克隆 `Nex-Z/XiaoAiAgent`，使用其要求的 **Python 3.12+** 环境。本次 Windows/Python 3.12.15 + `qwen3:8b` 已通过上游安装、适配层与 LangGraph 时间工具预检；下一步由设备所有者在本机设置环境变量并执行 `python main.py --list-devices`，明确选择设备后再验证语音 TTS。初次测试保留小爱原生回答并设置触发词。安装成功与文本预检不代表已经完成真机语音闭环。
 
 > 本仓库**不复制** XiaoAiAgent 源码，不声称自己的 `config/bridge.example.yaml` 已能驱动当前 CLI；该配置文件只是上游手动参考模板，具体参数随上游版本变化，以其 README 为准。
 

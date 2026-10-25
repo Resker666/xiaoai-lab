@@ -1,6 +1,6 @@
-# 实验 003：XiaoAiAgent + Ollama/Qwen 语音闭环（M1，待执行）
+# 实验 003：XiaoAiAgent + Ollama/Qwen 语音闭环（M1，文本预检通过）
 
-**本次仅核对公开源码，未安装/运行上游、未验证真实 Ollama 推理、未登录小米或验证 L05C TTS。** 本仓库没有 Xiaomi Bridge；先完成 M0 私有基线，再由设备所有者按阶段执行本实验。
+**2026-10-25：Windows 上已安装固定提交的上游，并通过真实 Qwen 文本推理、上游模型工厂与 LangGraph 只读时间工具往返预检；尚未登录小米、发现账户设备或验证 L05C TTS。** 本仓库没有 Xiaomi Bridge 实现。完整版本、检查结果及边界见[本次预检记录](results/2026-10-25-m1-preflight.md)。M0 的人工五次时延仍待补录，不据此宣称整个里程碑已验收。
 
 ## 已核对的来源与边界
 
@@ -50,6 +50,21 @@ Copy-Item ../xiaoai-lab/config/bridge.example.yaml config.yaml
 
 手动编辑 `config.yaml`：`llm.model` 填真实 tag；`provider: ollama`、`api_key: ""`、`base_url: http://127.0.0.1:11434`；保留 `server.host: 127.0.0.1`、`mcp_servers: []`、`mute_xiaoai: false`、`trigger_word: "帮我"`。配置属于上游，XiaoAi-Lab CLI 不读取它。
 
+本次已实测 `qwen3:8b`。该模型可在 `llm.extra` 中加入以下配置，关闭思考输出并约束首次试验的生成量；这些值是本次实验选择，不代表通用最佳性能参数：
+
+```yaml
+extra:
+  reasoning: false
+  num_predict: 256
+  num_ctx: 4096
+  keep_alive: "1m"
+  client_kwargs:
+    timeout: 60
+    trust_env: false
+```
+
+参考配置的 `xiaomi.did` 使用 `${MI_DID}` 占位符。先查询设备，再在同一终端设置实际 `MI_DID`，避免多音箱账户自动选择错误设备。
+
 ## 3. 无账号的模型适配层预检
 
 在上游目录及其 Python 3.12 环境内运行：
@@ -65,13 +80,18 @@ Copy-Item ../xiaoai-lab/config/bridge.example.yaml config.yaml
 仅在上述预检完成后，在当前 PowerShell 会话设置凭据，避免写入脚本/命令历史中的字面密码：
 
 ```powershell
+$env:PYTHONUTF8 = '1'
+$env:LANGSMITH_TRACING = 'false'
+$env:LANGCHAIN_TRACING_V2 = 'false'
 $env:MI_USER = Read-Host '小米账号（仅当前进程环境）'
 $securePassword = Read-Host '小米密码' -AsSecureString
 $env:MI_PASS = [System.Net.NetworkCredential]::new('', $securePassword).Password
 .\.venv\Scripts\python.exe main.py --list-devices
 ```
 
-输出包含账号/设备标识，**不要上传原件**。私下核对目标并填入上游 `xiaomi.did`，多设备时不要依赖自动选择。确认 `.mi.token` / `config.yaml` 在上游目录被忽略：`git check-ignore .mi.token config.yaml`。Token 默认位于当前工作目录；始终从上游根目录运行，不在 XiaoAi-Lab 内登录。
+判断成功应看是否列出目标设备，而不是仅看进程退出码：该提交在部分登录/配置错误路径也会正常返回。实机型号与云端设备信息需由所有者私下核对。
+
+输出包含账号/设备标识，**不要上传原件**。私下核对目标，在下一阶段把对应 `deviceID` 放入当前终端的 `MI_DID`；配置由 `${MI_DID}` 读取，多设备时不要依赖自动选择。确认 `.mi.token` / `config.yaml` 在上游目录被忽略：`git check-ignore .mi.token config.yaml`。Token 默认位于当前工作目录；始终从上游根目录运行，不在 XiaoAi-Lab 内登录。
 
 macOS 使用 `read -r MI_USER; export MI_USER` 与 `read -rs MI_PASS; export MI_PASS` 输入当前 shell 的环境变量（不要粘贴字面凭据到命令行）。实验结束后清理当前会话变量。
 
@@ -80,11 +100,17 @@ macOS 使用 `read -r MI_USER; export MI_USER` 与 `read -rs MI_PASS; export MI_
 ## 5. 真机语音验收与记录
 
 ```powershell
+$env:LANGSMITH_TRACING = 'false'
+$env:LANGCHAIN_TRACING_V2 = 'false'
+$env:MI_DID = Read-Host '输入目标 L05C 所在行的 deviceID（仅留在本机）'
+if ([string]::IsNullOrWhiteSpace($env:MI_DID)) { throw '请先明确选择目标音箱' }
 .\.venv\Scripts\python.exe main.py
 # 结束程序后清理当前会话：
-Remove-Item Env:MI_USER, Env:MI_PASS
+Remove-Item Env:MI_USER, Env:MI_PASS, Env:MI_DID
 Remove-Variable securePassword
 ```
+
+启动后需看到音箱监听成功的日志；仅出现 FastAPI 服务启动不代表音箱初始化成功。该提交在音箱初始化失败后仍可能保留 HTTP 服务。
 
 对音箱说一条包含触发词的普通问题，例如“小爱同学，帮我用一句话解释什么是 RTOS”。按顺序记录：设备列表识别 → 新对话进入轮询 → Agent 文本生成 → TTS 发送 → **亲耳听到播报**。TTS API 成功日志不等于声音验收。记录是否双重回答；保留原生回答时可能发生。
 

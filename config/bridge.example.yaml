@@ -12,7 +12,8 @@ llm:
 xiaomi:
   username: "${MI_USER}"
   password: "${MI_PASS}"
-  did: ""
+  # Set MI_DID after --list-devices; don't auto-select another account device.
+  did: "${MI_DID}"
   hardware: "L05C"
   use_command: true
   mute_xiaoai: false
