@@ -20,4 +20,5 @@
 - M0：已补齐参数边界、明确 TCP 状态、Ollama 响应校验、私有 JSON 保存和离线自动化测试。Windows/Python 3.11 已本地验证，CI 配置覆盖 Windows/macOS/Linux、Python 3.10/3.12。
 - Issue #1：已保存自有设备的授权网络探测结果；所有者确认 L05C、固件 1.62.28 和原生问答成功，5 次原生问答人工计时仍待补录。执行步骤和[记录模板](experiments/templates/m0-record.md)已提供，Issue 保留未验收项。
 - Issue #2：M1 最低功能验收已满足：所有者完成短信验证、目标识别并确认音箱实际播报与终端 Agent 回复一致。真实模型及时间工具预检、可选验证和多设备绑定过程已记录，见[首次语音记录](experiments/results/2026-10-25-m1-voice.md)。尚无时延、重复播报及长期成功率结论；Issue／PR 状态未自动关闭或合并。
+- M1 云端模型选项：复用上游 ChatDeepSeek，新增 `deepseek-flash` 非思考配置和[实验 004](experiments/004-deepseek.md)。模拟 HTTP／工具往返通过，所有者切换后反馈可用；账号 Key、真实请求日志及音箱标识不入库，时延、费用、长期稳定性仍待记录。
 - M2–M4 本次未实现；性能结论和硬件假设不得从软件测试推导。

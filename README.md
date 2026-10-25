@@ -93,6 +93,8 @@ xiaoai-lab doctor
 
 > 本仓库**不复制** XiaoAiAgent 源码，不声称自己的 `config/bridge.example.yaml` 已能驱动当前 CLI；该配置文件只是上游手动参考模板，具体参数随上游版本变化，以其 README 为准。
 
+希望把模型计算切换到云端时，见[实验 004：DeepSeek API](docs/experiments/004-deepseek.md)和[独立 llm 配置块](config/llm.deepseek.example.yaml)。已完成模拟 HTTP／工具往返预检，所有者按本机切换步骤后反馈可用；尚无时延、长期成功率或费用数据。
+
 ## 仓库结构
 
 ```text

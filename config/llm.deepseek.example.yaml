@@ -1,0 +1,17 @@
+# LLM BLOCK ONLY for the separately cloned XiaoAiAgent config.yaml.
+# Replace its entire llm block; preserve xiaomi/server/mcp_servers settings.
+# Official docs checked 2026-10-25: https://api-docs.deepseek.com/
+# API key is resolved from the current process, never stored in this file.
+llm:
+  provider: "deepseek"
+  api_key: "${DEEPSEEK_API_KEY}"
+  model: "deepseek-flash"
+  base_url: "https://api.deepseek.com"
+  temperature: 0.3
+  extra:
+    max_tokens: 512
+    timeout: 60
+    max_retries: 0
+    extra_body:
+      thinking:
+        type: "disabled"
